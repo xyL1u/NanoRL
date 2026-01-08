@@ -1,11 +1,10 @@
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
 import pickle
 import gymnasium as gym
 import ale_py
 import shimmy
-from gymnasium import pprint_registry
-pprint_registry()
+
 
 # --- Hyperparameter ---
 gamma = 0.99 # Discount factor for reward

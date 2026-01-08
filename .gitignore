@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# venv / conda
+.venv/
+venv/
+.env/
+
+# RL runs / logs
+runs/
+wandb/
+logs/
+
+# checkpoints / models
+checkpoints/
+*.pt
+*.pth
+*.ckpt

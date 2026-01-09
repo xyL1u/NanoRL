@@ -161,7 +161,7 @@ while True:
 
     # Calculate the difference frame
     diff_obs = cur_obs - pre_obs if pre_obs is not None else np.zeros(D)
-    cur_obs = pre_obs
+    pre_obs = cur_obs
 
     # -----------------------------------------------------------------
     # STEP 2: Forward Pass & Action Selection

@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle
@@ -5,21 +7,27 @@ import gymnasium as gym
 import ale_py
 import shimmy
 
+# --- Path ---
+THIS_FILE = Path(__file__).resolve()
+ROOT = THIS_FILE.parents[1]
+RESULT_DIR = ROOT / 'outputs' / 'pong'
+RESULT_DIR.mkdir(parents=True, exist_ok=True)
+save_path = RESULT_DIR / 'save.pkl'
+curve_path = RESULT_DIR / 'training_curve.png'
 
 # --- Hyperparameter ---
 gamma = 0.99 # Discount factor for reward
 H = 200 # Number of hidden layer neurons
 decay_rate = 0.99 # Discount factor for RMSProp
 resume = False # Resume from previous checkpoint?
-learning_rate = 1e-4
+learning_rate = 1e-3
 batch_size = 10
 
 # --- Model Initialization ---
 D = 80 * 80
 
-save_file = 'save.p'
-if resume:
-    model = pickle.load(open('save.p', 'rb'))
+if resume and os.path.exists(save_path):
+    model = pickle.load(open(save_path, 'rb'))
 else:
     model = {}
     # Xavier initialization
@@ -257,9 +265,9 @@ while True:
                 # Reset the batch gradient buffer
                 grad_buffer[k] = np.zeros_like(v)
 
-        if episode % 100 == 0:
-            print(f'----- Saving model to {save_file} -----')
-            pickle.dump(model, open(save_file, 'wb'))
+        if episode % 200 == 0:
+            print(f'----- Saving model to {save_path} -----')
+            pickle.dump(model, open(save_path, 'wb'))
 
             plt.figure(figsize=(10, 5))
             plt.plot(reward_history)
@@ -267,11 +275,11 @@ while True:
             plt.xlabel('Episode')
             plt.ylabel('Total Reward')
             plt.grid(True)
-            plt.savefig('training_curve.png')
+            plt.savefig(curve_path)
             plt.close()
         
         MAX_EPISODES = 8000
         if episode >= MAX_EPISODES:
             print(f"----- Game End -----")
-            pickle.dump(model, open(save_file, 'wb'))
+            pickle.dump(model, open(save_path, 'wb'))
             break

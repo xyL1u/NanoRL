@@ -18,7 +18,7 @@ wandb/
 logs/
 
 # checkpoints / models
-checkpoints/
+outputs/
 *.pt
 *.pth
 *.ckpt

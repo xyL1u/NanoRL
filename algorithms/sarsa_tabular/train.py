@@ -15,14 +15,13 @@ class TrainConfig:
     env_id: str
     seed: int
     num_episodes: int
-    max_episodes_step: int | None = None
+    max_episode_steps: int | None = None
 
     # SARSA hyperparameters
     gamma: float = 0.99
     alpha: float = 0.1
     epsilon: float = 0.1
 
-    # Output path
     algorithm_name: str = 'sarsa_tabular'
 
 def ensure_output_dirs(algorithm_name: str) -> dict:
@@ -87,7 +86,7 @@ def train(cfg: TrainConfig) -> dict:
     env_cfg = EnvConfig(
         env_id=cfg.env_id,
         seed=cfg.seed,
-        max_episodes_steps=cfg.max_episodes_step,
+        max_episode_steps=cfg.max_episode_steps,
         render_mode=None,
         is_eval=False,
     )
@@ -200,3 +199,30 @@ def save_results_csv(results_dir, episode_returns, episode_lengths):
         'rewards_csv': str(rewards_path),
         'lengths_csv': str(lengths_path),
     }
+
+if __name__ == "__main__":
+    cfg = TrainConfig(
+        env_id='CliffWalking-v0',
+        seed=43,
+        num_episodes=500,
+        max_episode_steps=None,
+        gamma=0.9,
+        alpha=0.1,
+        epsilon=0.1,
+        algorithm_name='sarsa_tabular',
+    )
+
+    summary = train(cfg)
+
+    # Quick summary prints
+    returns = summary['episode_returns']
+    last_k = 10 if len(returns) >= 10 else len(returns)
+    avg_last_k = sum(returns[-last_k:]) / last_k if last_k > 0 else 0.0
+
+    print("=== TRAIN DONE ===")
+    print(f"Episodes: {len(returns)}")
+    print(f"Average return (last {last_k} eps): {avg_last_k:.3f}")
+    print(f"Q-table saved to: {summary['qtable_path']}")
+    print(f"Curve saved to:   {summary['figure_path']}")
+    print(f"Rewards CSV:      {summary['rewards_csv']}")
+    print(f"Lengths CSV:      {summary['lengths_csv']}")
